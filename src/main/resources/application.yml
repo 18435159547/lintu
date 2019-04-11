@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+    datasource:
+        name: test
+        url: jdbc:mysql://127.0.0.1:3306/ltoa
+        username: root
+        password: root
+        driver-class-name: com.mysql.jdbc.Driver
+mybatis:
+  mapper-locations: classpath:templates/mapper/*Mapper.xml
+  type-aliases-package: com.lintu.demo.domain
+#security关闭http基本验证
+  #监控关闭
+  security:
+    basic:
+      enabled: false
+  management:
+    security:
+      enabled: false
+
+
