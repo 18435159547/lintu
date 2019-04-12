@@ -1,5 +1,7 @@
 package com.lintu.demo.config;
 
+import com.lintu.demo.domain.Staff;
+import com.lintu.demo.mapper.StaffMapper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -12,11 +14,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CustomRealm extends AuthorizingRealm {
-    private UserMapper userMapper;
-
     @Autowired
-    private void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    private Staff staff;
+
+
+
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
     }
 
     /*
@@ -31,7 +36,7 @@ public class CustomRealm extends AuthorizingRealm {
         System.out.println("————身份认证方法————");
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         // 从数据库获取对应用户名密码的用户
-        String password = userMapper.getPassword(token.getUsername());
+        String password = staff.getLoginPassword(token.getUsername());
         if (null == password) {
             throw new AccountException("用户名不正确");
         } else if (!password.equals(new String((char[]) token.getCredentials()))) {
@@ -39,6 +44,8 @@ public class CustomRealm extends AuthorizingRealm {
         }
         return new SimpleAuthenticationInfo(token.getPrincipal(), password, getName());
     }
+
+
 
     /*
      * 获取授权信息
@@ -53,7 +60,7 @@ public class CustomRealm extends AuthorizingRealm {
         String username = (String) SecurityUtils.getSubject().getPrincipal();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         //获得该用户角色
-        String role = userMapper.getRole(username);
+        String role = staff.getRole(username);
         Set<String> set = new HashSet<>();
         //需要将 role 封装到 Set 作为 info.setRoles() 的参数
         set.add(role);
